@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>User CRUD</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+        }
+        input {
+            padding: 5px;
+            margin: 5px;
+        }
+        button {
+            padding: 6px 10px;
+            margin: 5px;
+            cursor: pointer;
+        }
+        table {
+            border-collapse: collapse;
+            margin-top: 20px;
+            width: 60%;
+        }
+        th, td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: center;
+        }
+        th {
+            background-color: #f4f4f4;
+        }
+    </style>
+</head>
+<body>
+
+<h2>Simple User CRUD </h2>
+
+<h3>Tambah / Update User</h3>
+<input type="hidden" id="userId">
+<input type="text" id="name" placeholder="Name">
+<input type="number" id="age" placeholder="Age">
+<button onclick="saveUser()">Save</button>
+<button onclick="clearForm()">Clear</button>
+
+<h3>Data Users</h3>
+
+<table>
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Age</th>
+        <th>Action</th>
+    </tr>
+    </thead>
+    <tbody id="userTable">
+    </tbody>
+</table>
+
+<script>
+
+    const baseUrl = "/api/users";
+
+    function loadUsers() {
+        fetch(baseUrl)
+            .then(res => res.json())
+            .then(data => {
+                const table = document.getElementById("userTable");
+                table.innerHTML = "";
+
+                data.data.forEach(user => {
+                    table.innerHTML += `
+                        <tr>
+                            <td>${user.id}</td>
+                            <td>${user.name}</td>
+                            <td>${user.age}</td>
+                            <td>
+                                <button onclick="editUser('${user.id}','${user.name}',${user.age})">Edit</button>
+                                <button onclick="deleteUser('${user.id}')">Delete</button>
+                            </td>
+                        </tr>
+                    `;
+                });
+            });
+    }
+
+    function saveUser() {
+        const id = document.getElementById("userId").value;
+        const name = document.getElementById("name").value;
+        const age = document.getElementById("age").value;
+
+        const data = { name, age };
+
+        if (id) {
+            // UPDATE
+            fetch(`${baseUrl}/${id}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data)
+            }).then(() => {
+                loadUsers();
+                clearForm();
+            });
+        } else {
+            // CREATE
+            fetch(baseUrl, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data)
+            }).then(() => {
+                loadUsers();
+                clearForm();
+            });
+        }
+    }
+
+    function editUser(id, name, age) {
+        document.getElementById("userId").value = id;
+        document.getElementById("name").value = name;
+        document.getElementById("age").value = age;
+    }
+
+    function deleteUser(id) {
+        if (confirm("Yakin mau hapus?")) {
+            fetch(`${baseUrl}/${id}`, {
+                method: "DELETE"
+            }).then(() => loadUsers());
+        }
+    }
+
+    function clearForm() {
+        document.getElementById("userId").value = "";
+        document.getElementById("name").value = "";
+        document.getElementById("age").value = "";
+    }
+
+    loadUsers();
+
+</script>
+
+</body>
+</html>
