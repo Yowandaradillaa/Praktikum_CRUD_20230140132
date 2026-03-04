@@ -93,3 +93,9 @@ Response Success (200):
 }
 ```
 ![img_3.png](img_3.png)
+
+##Web Simple
+![img_5.png](img_5.png)
+
+##Database
+![img_4.png](img_4.png)
