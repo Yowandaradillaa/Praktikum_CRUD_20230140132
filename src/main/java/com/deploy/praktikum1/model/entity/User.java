@@ -1,6 +1,5 @@
 package com.deploy.praktikum1.model.entity;
 
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -11,7 +10,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table (name = "users")
+@Table(name = "users")
 @Data
 @Builder
 @NoArgsConstructor
@@ -19,7 +18,10 @@ import lombok.NoArgsConstructor;
 public class User {
 
     @Id
-    private String Id;
+    private String id;
+
+    @Column(name = "name", nullable = false)
+    private String name;
 
     @Column(name = "age", nullable = false)
     private int age;
